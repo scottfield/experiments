@@ -29,7 +29,7 @@ public class GlobalControllerAdvice {
     private static final int FIELD_NAME_POSITION = 2;
     private static final String errorCodeSeperator = "\\.";
 
-    @InitBinder
+    /*@InitBinder
     public void globalInitBinder(WebDataBinder binder) {
         String className = binder.getTarget().getClass().getName();
         String validatorName = className + suffix;
@@ -44,7 +44,7 @@ public class GlobalControllerAdvice {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     @ExceptionHandler
     @ResponseBody

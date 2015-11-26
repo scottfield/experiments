@@ -20,7 +20,7 @@ import java.util.List;
  */
 @Configuration
 @EnableWebMvc
-@EnableAspectJAutoProxy
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 @ComponentScan(basePackages = "com.gnum.experiments.aop.demo")
 public class Config extends WebMvcConfigurerAdapter {
 

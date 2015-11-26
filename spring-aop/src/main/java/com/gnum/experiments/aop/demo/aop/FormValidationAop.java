@@ -1,11 +1,12 @@
 package com.gnum.experiments.aop.demo.aop;
 
 import com.gnum.experiments.aop.demo.FormInputInvalidException;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Validator;
 
 /**
  * @author jackie
@@ -14,18 +15,16 @@ import org.springframework.validation.Errors;
 @Aspect
 @Component
 public class FormValidationAop {
-    @Before("execution(* com.gnum.experiments.aop.demo.controller..*(..))")
-    public void validate(JoinPoint joinPoint) {
-        Object[] args = joinPoint.getArgs();
-        for (Object arg : args) {
-            if (Errors.class.isAssignableFrom(arg.getClass())) {
-                Errors errors = (Errors) arg;
-                if (errors.hasErrors()) {
-                    throw new FormInputInvalidException(errors);
-                }
-            }
-
+    @Before(value = "execution(* com.gnum.experiments.aop.demo.controller.*.*(@javax.validation.Valid (*),org.springframework.validation.BindingResult,..))&&args(target,error,..)")
+    public void validate(Object target, BindingResult error) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        System.out.println(target.getClass().getName());
+        String className = target.getClass().getName();
+        String validatorName = className + "Validator";
+        Class clazz = Class.<Validator>forName(validatorName);
+        Validator validator = BeanUtils.<Validator>instantiate(clazz);
+        validator.validate(target, error);
+        if (error.hasErrors()) {
+            throw new FormInputInvalidException(error);
         }
-
     }
 }
